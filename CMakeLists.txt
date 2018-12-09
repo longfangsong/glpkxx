@@ -7,7 +7,7 @@ link_libraries(glpk)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(glpkxx library.cpp library.h)
+add_library(glpkxx glpkxx.cpp glpkxx.h)
 
-add_executable(glpkxx-test test.cpp library.h)
+add_executable(glpkxx-test test.cpp glpkxx.h)
 target_link_libraries(glpkxx-test glpkxx)

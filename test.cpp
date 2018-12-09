@@ -1,4 +1,4 @@
-#include "library.h"
+#include "glpkxx.h"
 
 int main() {
     hello();
