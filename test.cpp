@@ -1,16 +1,24 @@
 #include "glpkxx.h"
+#include <iostream>
+
+using namespace std;
 
 int main() {
-    hello();
-//    LinerProblem problem;
-//    Variable x1("x1"), x2("x2"), x3("x3");
-//    x1 >= 0;
-//    x2 >= 0;
-//    x3 >= 0;
-//    problem.addConstraint(x1 + x2 + x3 <= 100);
-//    problem.addConstraint(10 * x1 + 4 * x2 + 5 * x3 <= 600);
-//    problem.addConstraint(2 * x1 + 2 * x2 + 6 * x3 <= 100);
-//    pair<double, map<Variable,double>> result = problem.maximize(10 * x1 + 6 * x2 + 4 * x3);
+
+    // Formula f = (2 * a + 1.5 * b + 4 * c <= 100);
+    // f.print();
+    
+   LinearProblem problem;
+   Variable x1("x1"), x2("x2"), x3("x3");
+   Variable a("x1");
+   x1 >= 0;
+   x2 >= 0;
+   x3 >= 0;
+   problem.addConstraint(x1 + x2 + x3 <= 100);
+   problem.addConstraint(10 * x1 + 4 * x2 + 5 * x3 <= 600);
+   problem.addConstraint(2 * x1 + 2 * x2 + 6 * x3 <= 200);
+//    pair<double, map<Variable,double>> result = 
+   problem.maximize(10 * x1 + 6 * x2 + 4 * x3);
 //    cout << result.first << endl; // 733.333
 //    cout << result.second[x1] << endl; // 33.333
 //    cout << result.second[x2] << endl; // 66.667
