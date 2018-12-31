@@ -22,7 +22,7 @@ class FormulaBase {
     FormulaBase();
 };
 
-class Variable: public FormulaBase {
+class Variable : public FormulaBase {
     private: 
     string name;
     
@@ -33,10 +33,10 @@ class Variable: public FormulaBase {
     Formula operator+(const Variable& v);
     void operator<=(const double& v);
     void operator>=(const double& v);
-    // Formula operator<=(const Variable& v);
+    bool operator<(const Variable& v) const;
 };
 
-class Formula: public FormulaBase {
+class Formula : public FormulaBase {
     private:
     vector<double> factors;
     vector<Variable> variables;
@@ -65,13 +65,13 @@ static Formula operator*(double f, const Variable& v) {
 class LinearProblem {
     private: 
     vector<Formula> subjects;
-    void simplex(int mode, Formula& f);
+    pair<double, map<Variable, double> > simplex(int mode, Formula& f);
     int getBoundMode(const FormulaBase& base);
 
     public: 
     void addConstraint(Formula f);
-    void maximize(Formula f);
-    void minimize(Formula f);
+    pair<double, map<Variable, double> > maximize(Formula f);
+    pair<double, map<Variable, double> > minimize(Formula f);
 };
 
 #endif

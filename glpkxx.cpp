@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <glpk.h>
 #include <utility>
+#include <map>
 
 
 FormulaBase::FormulaBase() {
@@ -41,6 +42,10 @@ void Variable::operator<=(const double& v) {
 void Variable::operator>=(const double& v) {
     hasLowBnd = true;
     lowBnd = v;
+}
+
+bool Variable::operator<(const Variable& v) const {
+    return name < v.getName();
 }
 
 string Variable::getName() const {
@@ -106,8 +111,12 @@ void LinearProblem::addConstraint(Formula f) {
     subjects.push_back(f);
 }
 
-void LinearProblem::maximize(Formula f) {
+pair<double, map<Variable, double> > LinearProblem::maximize(Formula f) {
     return simplex(GLP_MAX, f);
+}
+
+pair<double, map<Variable, double> > LinearProblem::minimize(Formula f) {
+    return simplex(GLP_MIN, f);
 }
 
 int LinearProblem::getBoundMode(const FormulaBase& base) {
@@ -122,7 +131,7 @@ int LinearProblem::getBoundMode(const FormulaBase& base) {
     return bnd;
 }
 
-void LinearProblem::simplex(int mode, Formula& f) {
+pair<double, map<Variable, double> > LinearProblem::simplex(int mode, Formula& f) {
     glp_prob* lp;
     int size = f.size() * subjects.size();
     int* ia = new int[size];
@@ -158,7 +167,6 @@ void LinearProblem::simplex(int mode, Formula& f) {
             for (int k = 0; k < variables.size(); k ++) {
                 if ((variables[j]) == (subjects[i].getVariables()[k])) {
                     ar[idx] = subjects[i].getFactors()[k];
-                    // cout << ar[idx] << endl;
                     break;
                 }
             }
@@ -167,12 +175,14 @@ void LinearProblem::simplex(int mode, Formula& f) {
     
     glp_load_matrix(lp, size, ia, ja, ar);
     glp_simplex(lp, NULL);
-    
-    double z = glp_get_obj_val(lp);
-    cout << z << endl;
+
+    map<Variable, double> m;
     for (int i = 0; i < variables.size(); i ++) {
-        cout << glp_get_col_prim(lp, i + 1) << endl;
+        m[variables[i]] = glp_get_col_prim(lp, i + 1);
     }
+    pair<double, map<Variable, double> > p;
+    p.first = glp_get_obj_val(lp);
+    p.second = m;
     
     glp_delete_prob(lp);
     glp_free_env();
@@ -180,4 +190,6 @@ void LinearProblem::simplex(int mode, Formula& f) {
     delete [] ia;
     delete [] ja;
     delete [] ar;
+
+    return p;
 }
